@@ -7,11 +7,12 @@ In the future, we plan to build some of this functionality into Platform as an A
 
 ## Setup
 
+1. Fork the repo
 1. Install the node version specified in nvmrc (likely using a node version manager like [NVM](https://github.com/nvm-sh/nvm)).
-2. Run `npm install`
-3. Make a copy of .env_template (.env.production at minimum, .env if you have a demo community/airtable)
-4. Fill out the required environment variables for your community.
-5. Customize import.js (see detailed instructions below)
+1. Run `npm install`
+1. Make a copy of .env_template (.env.production at minimum, .env if you have a demo community/airtable)
+1. Modify/fill out the required environment variables for your community.
+1. Customize import.js (see detailed instructions below)
 
 ## Running
 
@@ -25,6 +26,12 @@ These are the ones you're likely going to be running:
 - `npm run upsert`: Runs the import.js script, injecting environment variables from `.env.production` if available.
 - `npm run delete-dev`: Runs the delete.js script, which deletes all Pubs from a community, injecting environment variables from `.env` if available.
 - `npm run delete`: Runs the delete.js script, which deletes all Pubs from a community, injecting environment variables from `.env.production` if available.
+
+### Using GitHub Action Workflows
+
+The package exposes two workflows (one for dev, one for prod) that can be used to run the code with GitHub Actions, in the `.github/workflows` directory.
+They include dispatches that can be used to run the workflow either in the repository or via webhook, as described in [GitHub's API documentation](https://docs.github.com/en/rest/actions/workflows?apiVersion=2022-11-28).
+To set these up, simply enter the required environment variables for your customization in your GitHub repo's "Secrets and Variables" setting.
 
 ## Customizing
 
