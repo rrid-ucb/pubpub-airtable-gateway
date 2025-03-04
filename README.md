@@ -3,7 +3,8 @@
 This package contains a series of scripts and convenience functions used to sync content from [Airtable](https://airtable.com) bases to [PubPub Platform](https://knowledgefutures.org/platform) using the two system's APIs.
 The code has been tested in production, but is somewhat rough and error-prone.
 Use at your own risk.
-In the future, we plan to build some of this functionality into Platform as an Action or Integration, but we anticipate
+In the future, we plan to build some of this functionality into Platform as an Action or Integration,
+but we anticipate more custom applications will need to use this package or its successors for the forseeable future.
 
 ## Setup
 
