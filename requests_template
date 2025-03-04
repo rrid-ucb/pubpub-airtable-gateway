@@ -1,0 +1,36 @@
+GET https://app.pubpub.org/api/v0/c/<slug>/site/pubs
+Authorization: Bearer <token>
+Prefer: "return=representation"
+Accept: "*/*"
+
+### 
+GET https://app.pubpub.org/api/v0/c/<slug>/site/pub-types HTTP/1.1
+Authorization: Bearer <token>
+Prefer: "return=representation"
+Accept: "*/*"
+
+###
+
+GET https://app.pubpub.org/api/v0/c/<slug>/site/stages HTTP/1.1
+Authorization: Bearer <token>
+Prefer: "return=representation"
+Accept: "*/*"
+
+### 
+
+PUT https://app.pubpub.org/api/v0/c/<slug>/site/pubs/<ID>/relations
+Authorization: Bearer <token>
+Prefer: "return=representation"
+Accept: "*/*"
+Content-Type: "application/json",
+
+{
+  "<slug>:pub-content-types": [
+    {
+      "value": null,
+      "relatedPubId": "<ID>"
+    }
+  ]
+}
+
+###

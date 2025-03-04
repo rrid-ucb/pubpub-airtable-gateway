@@ -1,0 +1,17 @@
+{
+  "type": "module",
+  "dependencies": {
+    "@dotenvx/dotenvx": "^1.31.0",
+    "airtable": "^0.12.2",
+    "slugify": "^1.6.6"
+  },
+  "scripts": {
+    "upsert": "NODE_ENV=production node import.js",
+    "upsert-dev": "dotenvx run -f .env -- node import.js",
+    "upsert-prod": "NODE_ENV=production dotenvx run -f .env.production -- node import.js",
+    "delete": "NODE_ENV=production node delete.js",
+    "delete-dev": "dotenvx run -f .env -- node delete.js",
+    "delete-prod": "NODE_ENV=production dotenvx run -f .env.production -- node delete.js",
+    "insert-temp-gdrive": "NODE_ENV=production dotenvx run -f .env.production -- node importFromGdrive.js"
+  }
+}

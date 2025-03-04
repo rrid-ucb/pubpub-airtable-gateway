@@ -1,0 +1,30 @@
+name: DEV Upsert
+
+on: workflow_dispatch
+
+# A workflow run is made up of one or more jobs that can run sequentially or in parallel
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions/setup-node@v4
+        with:
+          node-version-file: ".nvmrc"
+      - run: npm install
+      - name: Run script
+        env:
+          PUBPUB_API_KEY: ${{ secrets.PUBPUB_API_KEY_DEV }}
+          AIRTABLE_API_KEY: ${{ secrets.AIRTABLE_API_KEY_DEV }}
+          AIRTABLE_BASE_ID: ${{ vars.AIRTABLE_BASE_ID_DEV }}
+          COMMUNITY_SLUG: ${{ vars.COMMUNITY_SLUG_DEV }}
+          NARRATIVE_TYPE_ID: ${{ vars.NARRATIVE_TYPE_ID_DEV }}
+          TYPE_TYPE_ID: ${{ vars.TYPE_TYPE_ID_DEV }}
+          PERSON_TYPE_ID: ${{ vars.PERSON_TYPE_ID_DEV }}
+          CONTRIBUTOR_TYPE_ID: ${{ vars.CONTRIBUTOR_TYPE_ID_DEV }}
+          PUB_TYPE_ID: ${{ vars.PUB_TYPE_ID_DEV }}
+          INSTITUTIONS_TYPE_ID: ${{ vars.INSTITUTIONS_TYPE_ID_DEV }}
+          ROLES_TYPE_ID: ${{ vars.ROLES_TYPE_ID_DEV }}
+          AIRTABLE_STAGE_ID: ${{ vars.AIRTABLE_STAGE_ID_DEV }}
+          NONPUBS_STAGE_ID: ${{ vars.NONPUBS_STAGE_ID_DEV }}
+        run: npm run upsert

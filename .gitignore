@@ -1,0 +1,5 @@
+node_modules/
+.globals.js
+requests.http
+.env*
+tempUrls.json
