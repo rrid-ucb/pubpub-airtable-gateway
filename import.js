@@ -5,7 +5,7 @@ import slugify from "slugify";
 import { getRelatedPubsArray } from "./lib/utils.js";
 
 const pubTypes = {
-  narrative: process.env.NARRATIVE_TYPE_ID,
+  narrative: process.env.NARRATIVE_TYPE_ID, //pubtype IDs
   type: process.env.TYPE_TYPE_ID,
   person: process.env.PERSON_TYPE_ID,
   contributor: process.env.CONTRIBUTOR_TYPE_ID,
