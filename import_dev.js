@@ -12,6 +12,7 @@ const pubTypes = {
   pub: process.env.PUB_TYPE_ID,
   institutions: process.env.INSTITUTIONS_TYPE_ID,
   roles: process.env.ROLES_TYPE_ID,
+  
   //added for preprint and reviewer
   preprint: process.env.PREPRINT_TYPE_ID,
   reviewer: process.env.REVIEWER_TYPE_ID,
@@ -60,6 +61,8 @@ const NARRATIVE_PUBS = await airtableToPubPub(
   "airtable-id"
 );
 
+
+//Is this a template for reviewers?
 const PEOPLE_PUBS = await airtableToPubPub(
   airtable,
   "Person",
@@ -128,102 +131,112 @@ const CONTRIBUTOR_PUBS = await airtableToPubPub(
 );
 
 const PUB_PUBS = await airtableToPubPub(
-  airtable,
-  "Pub",
-  pubTypes.pub,
-  stages.airtable,
-  {
-    title: (record) => record.get("Title"),
-    "pub-contributors": (record) =>
-      getRelatedPubsArray(
-        record.get("Active pub contributors"),
-        CONTRIBUTOR_PUBS,
-        "airtable-id"
-      ),
-    narratives: (record) =>
-      getRelatedPubsArray(
-        record.get("Project narrative"),
-        NARRATIVE_PUBS,
-        "airtable-id"
-      ),
-    "doi-url": (record) => record.get("DOI"),
-    doi: (record) =>
-      record.get("DOI") && record.get("DOI").split("https://doi.org/")[1],
-    "pub-url": (record) => record.get("Link to PubPub"),
-    slug: (record) =>
-      record.get("Slug") ??
-      (record.get("Link to PubPub") &&
-        record.get("Link to PubPub").split("/pub/")[1]),
-    "pub-content-types": (record) =>
-      getRelatedPubsArray(record.get("Pub type"), TYPE_PUBS, "airtable-id"),
-    "publication-date": (record) =>
-      record.get("Publication date") &&
-      new Date(record.get("Publication date")).toISOString(),
-
-    //unsure what these fields are for
-    "google-drive-folder-url": (record) =>
-      record.get("Link to folder with assets"),
-    "typeform-url": (record) => record.get("Typeform link"),
-    "twitter-collection-url": (record) =>
-      record.get("Twitter collection link") &&
-      record.get("Twitter collection link")[0],
-    "icing-hashtags": (record) =>
-      record.get("Icing hashtag (from Icing hashtags)"),
-
-
-    "feedback-status": (record) => record.get("Current feedback status"),
-
-    //NOTE: currently not just email. example: 
-    //David S Khoury (dkhoury@kirby.unsw.edu.au)
-    "author-email": (record) =>
-      record.get("Author_corr (from Selected)") && 
-      record.get("Author_corr (from Selected)").toString(),
-
-      
-    "social-count": (record) =>
-      record.get("Number of posts") && record.get("Number of posts")[0],
-  },
-  "airtable-id",
-  ["Internal pub for now", "New versions"]
-);
+    airtable,
+    "Pub",
+    pubTypes.pub,
+    stages.airtable,
+    {
+      title: (record) => record.get("Title"),
+      "pub-contributors": (record) =>
+        getRelatedPubsArray(
+          record.get("Active pub contributors"),
+          CONTRIBUTOR_PUBS,
+          "airtable-id"
+        ),
+      narratives: (record) =>
+        getRelatedPubsArray(
+          record.get("Project narrative"),
+          NARRATIVE_PUBS,
+          "airtable-id"
+        ),
+      "doi-url": (record) => record.get("DOI"),
+      doi: (record) =>
+        record.get("DOI") && record.get("DOI").split("https://doi.org/")[1],
+      "pub-url": (record) => record.get("Link to PubPub"),
+      slug: (record) =>
+        record.get("Slug") ??
+        (record.get("Link to PubPub") &&
+          record.get("Link to PubPub").split("/pub/")[1]),
+      "pub-content-types": (record) =>
+        getRelatedPubsArray(record.get("Pub type"), TYPE_PUBS, "airtable-id"),
+      "publication-date": (record) =>
+        record.get("Publication date") &&
+        new Date(record.get("Publication date")).toISOString(),
+      "google-drive-folder-url": (record) =>
+        record.get("Link to folder with assets"),
+      "typeform-url": (record) => record.get("Typeform link"),
+      "twitter-collection-url": (record) =>
+        record.get("Twitter collection link") &&
+        record.get("Twitter collection link")[0],
+      "icing-hashtags": (record) =>
+        record.get("Icing hashtag (from Icing hashtags)"),
+      "feedback-status": (record) => record.get("Current feedback status"),
+      "author-email": (record) =>
+        record.get("Point person email") &&
+        record.get("Point person email").toString(),
+      "social-count": (record) =>
+        record.get("Number of posts") && record.get("Number of posts")[0],
+    },
+    "airtable-id",
+    ["Internal pub for now", "New versions"]
+  );
 
 const PREPRINT_PUBS = await airtableToPubPub(
     airtable,
-    "Preprint Info ONLY",    // Your Airtable table name
+    "Preprint Info ONLY",
     pubTypes.preprint,
-    stages.nonPubs,
+    stages.airtable,
     {
-      title: (record) => record.get("Title (from Selected)"),
-      
+      "title": (record) => record.get("Title (from Selected)"),
+      "abstract": (record) => record.get("Abstract"),
+      "domain": (record) => record.get("Domain"),
+      "team": (record) => record.get("Team/Domain"),
+     // 'keywords': (record) => record.get("Keywords"),
       "doi-url": (record) => record.get("Link/DOI (from Selected)"),
-      authors: (record) => record.get("Authors"),
-      "preprint-id": (record) => record.get("PreprintID"),  // Store this for reference
+     
+    //NOTE: Sometimes the link is not a doi. may have to have alternative parsing here.
+      "doi": (record) =>
+        record.get("Link/DOI (from Selected)") && record.get("Link/DOI (from Selected)").split("https://doi.org/")[1],
+      
+
+    //NOTE: Two fields with inconsistencies in formatting. Author_corr will have just name, just email, or both. example: 
+    //David S Khoury (dkhoury@kirby.unsw.edu.au). Can create a field that regex this in airtable.
+    //'Author Email' is a regex of this field, so sometimes has errors when its not in the above format.
+     "author-email": (record) =>
+        record.get("Author Email") && 
+        record.get("Author Email").toString(),
+  
+      "preprint-id": (record) => record.get("Preprint ID"),
       slug: (record) => 
-        record.get("Slug") ?? slugify(record.get("Title"), { lower: true }),
+        record.get("Slug") ?? slugify(record.get("Title (from Selected)"), { lower: true }),
     },
     "airtable-id"
-  );
+);
 
-  const REVIEWER_PUBS = await airtableToPubPub(
+const REVIEWER_PUBS = await airtableToPubPub(
     airtable,
     "Student Reviewer Inputs",
     pubTypes.reviewer,
-    stages.nonPubs,
+    stages.airtable,
     {
-      "full-name": (record) => 
-        `${record.get("First Name (Proposed Reviewer)")} ${record.get("Last Name (Proposed Reviewer)")}`,
-      email: (record) => record.get("Reviewer Email"),
-      affiliation: (record) => record.get("Affiliation"),
-      // Link to the associated preprint
+      "reviewer-name": (record) => record.get("First + Last Name"), //NOTE: we have a first and last name field. this is the concatenated version
+      "email": (record) => record.get("Reviewer Email"),
+      "justification-for-invite": (record) => record.get("Justification for Invite"),
+      "affiliation": (record) => record.get("Affiliation"),
+      "reviewer-title": (record) => record.get("Reviewer Title"),
+      "highest-degree": (record) => record.get("Highest Degree"),
+      "subdiscipline": (record) => record.get("Subdiscipline"),
+      "link-to-profile": (record) => record.get("Link to Profile"),
+      
       "associated-preprint": (record) =>
         getRelatedPubsArray(
-          record.get("Preprint ID (pulled)"),  // Assuming this is the field name in Airtable
+          record.get("Preprint ID (pulled)"),
           PREPRINT_PUBS,
           "airtable-id"
         ),
       slug: (record) => 
         record.get("Slug") ?? 
-        slugify(`${record.get("First Name")}-${record.get("Last Name")}`, { lower: true }),
+        slugify(`${record.get("First Name (Proposed Reviewer)")}-${record.get("Last Name (Proposed Reviewer)")}`, { lower: true }),
     },
     "airtable-id"
-  );
+);
