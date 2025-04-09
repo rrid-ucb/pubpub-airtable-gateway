@@ -4,9 +4,26 @@ import os
 import json
 import requests
 import time
+import logging
+from datetime import datetime
 from dotenv import load_dotenv
 from airtable import Airtable
 import slugify
+
+# Create timestamp for this run
+TIMESTAMP = datetime.now().strftime("%Y%m%d_%H%M%S")
+
+# Set up logging
+log_file = f"test_run_{TIMESTAMP}.log"
+logging.basicConfig(
+    level=logging.INFO,
+    format='%(asctime)s - %(levelname)s - %(message)s',
+    handlers=[
+        logging.FileHandler(log_file),
+        logging.StreamHandler()
+    ]
+)
+logger = logging.getLogger(__name__)
 
 # Load environment variables
 load_dotenv()
@@ -17,8 +34,10 @@ COMMUNITY_SLUG = os.getenv("COMMUNITY_SLUG", "rrid")
 AIRTABLE_API_KEY = os.getenv("AIRTABLE_API_KEY")
 AIRTABLE_BASE_ID = os.getenv("AIRTABLE_BASE_ID")
 
-# PubPub API endpoints
+# URLs
 PUBPUB_BASE_URL = f"https://app.pubpub.org/api/v0/c/{COMMUNITY_SLUG}/site"
+PUBPUB_COMMUNITY_URL = f"https://app.pubpub.org/{COMMUNITY_SLUG}"
+AIRTABLE_BASE_URL = f"https://airtable.com/{AIRTABLE_BASE_ID}"
 
 # PubPub headers
 headers = {
@@ -50,21 +69,43 @@ stages = {
 # Test results
 test_results = {
     "success": [],
-    "failure": []
+    "failure": [],
+    "created_pubs": [],
+    "airtable_sources": {}
 }
 
-def log_result(test_name, success, message=None):
+def log_result(test_name, success, message=None, pub_data=None, airtable_data=None):
     """Log test results"""
     result = {
         "test": test_name,
         "success": success,
-        "message": message
+        "message": message,
+        "timestamp": datetime.now().isoformat()
     }
+    
+    if pub_data:
+        result["pub_data"] = pub_data
+        if success and "id" in pub_data:
+            test_results["created_pubs"].append({
+                "type": test_name,
+                "id": pub_data["id"],
+                "url": f"{PUBPUB_COMMUNITY_URL}/pub/{pub_data.get('slug', pub_data['id'])}"
+            })
+    
+    if airtable_data:
+        result["airtable_data"] = airtable_data
+        if "table" in airtable_data:
+            test_results["airtable_sources"][test_name] = {
+                "table": airtable_data["table"],
+                "url": f"{AIRTABLE_BASE_URL}/{airtable_data['table']}"
+            }
+    
     if success:
         test_results["success"].append(result)
+        logger.info(f"✅ {test_name}: {message if message else ''}")
     else:
         test_results["failure"].append(result)
-    print(f"{'✅' if success else '❌'} {test_name}: {message if message else ''}")
+        logger.error(f"❌ {test_name}: {message if message else ''}")
 
 def get_pub_types():
     """Get all pub types from PubPub"""
@@ -424,9 +465,56 @@ def test_delete_pub(pub_id):
         log_result("Delete Pub", False, f"Failed to delete pub with ID {pub_id}")
         return False
 
+def generate_report():
+    """Generate a markdown report of the test run"""
+    report_file = f"REPORT-{TIMESTAMP}.md"
+    
+    with open(report_file, "w") as f:
+        f.write(f"# PubPub API Test Report\n\n")
+        f.write(f"Test run completed at: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}\n\n")
+        
+        f.write("## Test Summary\n\n")
+        f.write(f"- Total tests: {len(test_results['success']) + len(test_results['failure'])}\n")
+        f.write(f"- Successful tests: {len(test_results['success'])}\n")
+        f.write(f"- Failed tests: {len(test_results['failure'])}\n\n")
+        
+        if test_results["created_pubs"]:
+            f.write("## Created Publications\n\n")
+            f.write("| Type | PubPub URL |\n")
+            f.write("|------|------------|\n")
+            for pub in test_results["created_pubs"]:
+                f.write(f"| {pub['type']} | [{pub['id']}]({pub['url']}) |\n")
+            f.write("\n")
+        
+        if test_results["airtable_sources"]:
+            f.write("## Airtable Data Sources\n\n")
+            f.write("| Test Type | Airtable Table |\n")
+            f.write("|-----------|----------------|\n")
+            for test_name, source in test_results["airtable_sources"].items():
+                f.write(f"| {test_name} | [{source['table']}]({source['url']}) |\n")
+            f.write("\n")
+        
+        if test_results["failure"]:
+            f.write("## Failed Tests\n\n")
+            for test in test_results["failure"]:
+                f.write(f"### {test['test']}\n")
+                f.write(f"- Time: {test['timestamp']}\n")
+                f.write(f"- Error: {test['message']}\n\n")
+        
+        f.write("## What to Expect in PubPub\n\n")
+        f.write("After this test run, you should see the following in your PubPub community:\n\n")
+        f.write(f"1. Visit your community at: {PUBPUB_COMMUNITY_URL}\n")
+        f.write("2. You should see new publications created for:\n")
+        for pub in test_results["created_pubs"]:
+            f.write(f"   - {pub['type']}: [{pub['id']}]({pub['url']})\n")
+        f.write("\n3. Each publication should have the fields and relationships as defined in the test cases.\n")
+        
+        f.write("\n## Log File\n\n")
+        f.write(f"For detailed logs, see: `{log_file}`\n")
+
 def run_all_tests():
     """Run all tests"""
-    print("Starting PubPub API tests...")
+    logger.info("Starting PubPub API tests...")
     
     # Test pub types API
     pub_types_data = test_pub_types_api()
@@ -460,15 +548,19 @@ def run_all_tests():
     if person_pub:
         test_delete_pub(person_pub["id"])
     
-    # Print test results
-    print("\nTest Results Summary:")
-    print(f"✅ Successful tests: {len(test_results['success'])}")
-    print(f"❌ Failed tests: {len(test_results['failure'])}")
+    # Print test results summary
+    logger.info("\nTest Results Summary:")
+    logger.info(f"✅ Successful tests: {len(test_results['success'])}")
+    logger.info(f"❌ Failed tests: {len(test_results['failure'])}")
     
     if test_results["failure"]:
-        print("\nFailed Tests:")
+        logger.error("\nFailed Tests:")
         for test in test_results["failure"]:
-            print(f"  - {test['test']}: {test['message']}")
+            logger.error(f"  - {test['test']}: {test['message']}")
+    
+    # Generate report
+    generate_report()
+    logger.info(f"\nTest report generated: REPORT-{TIMESTAMP}.md")
     
     return test_results
 

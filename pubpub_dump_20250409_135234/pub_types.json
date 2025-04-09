@@ -1,0 +1,167 @@
+[
+  {
+    "id": "a259328d-5748-412f-a7c4-98d4dfef01f9",
+    "description": "Reviewer information",
+    "name": "Reviewer",
+    "communityId": "1c7f7ca0-9ac3-478e-b929-7526c37e4c6c",
+    "createdAt": "2025-03-07T15:33:59.872Z",
+    "updatedAt": "2025-03-07T15:33:59.872Z",
+    "fields": [
+      {
+        "id": "72138198-87bc-493c-984c-2cf6b540d0fb",
+        "name": "Title",
+        "slug": "rrid:title",
+        "schemaName": "String",
+        "isRelation": false,
+        "isTitle": false,
+        "schema": null
+      },
+      {
+        "id": "99c78b1d-bd92-4f41-a260-f64eeeb2e5c8",
+        "name": "Reviewer Name",
+        "slug": "rrid:reviewer-name",
+        "schemaName": "String",
+        "isRelation": false,
+        "isTitle": true,
+        "schema": null
+      },
+      {
+        "id": "5d69c583-57d0-4ddf-87ac-062664b2fcc5",
+        "name": "Reviewer Email",
+        "slug": "rrid:reviewer-email",
+        "schemaName": "Email",
+        "isRelation": false,
+        "isTitle": false,
+        "schema": null
+      },
+      {
+        "id": "09538dc4-a224-4965-9804-ea0e147feceb",
+        "name": "Justification for Invite",
+        "slug": "rrid:justification-for-invite",
+        "schemaName": "String",
+        "isRelation": false,
+        "isTitle": false,
+        "schema": null
+      },
+      {
+        "id": "6d16802e-ce35-4625-a60d-0cfa77878b1a",
+        "name": "Affiliation",
+        "slug": "rrid:affiliation",
+        "schemaName": "String",
+        "isRelation": false,
+        "isTitle": false,
+        "schema": null
+      },
+      {
+        "id": "ccb5ad75-e9e0-4b1b-996d-851b29889fd4",
+        "name": "Reviewer Title",
+        "slug": "rrid:reviewer-title",
+        "schemaName": "String",
+        "isRelation": false,
+        "isTitle": false,
+        "schema": null
+      },
+      {
+        "id": "171f678c-bcef-4c0a-84a1-88f05f9bbe95",
+        "name": "Highest Degree",
+        "slug": "rrid:highest-degree",
+        "schemaName": "StringArray",
+        "isRelation": false,
+        "isTitle": false,
+        "schema": null
+      },
+      {
+        "id": "7f5bd937-6a6f-4ed6-8db7-4745ce17db61",
+        "name": "Subdiscipline",
+        "slug": "rrid:subdiscipline",
+        "schemaName": "String",
+        "isRelation": false,
+        "isTitle": false,
+        "schema": null
+      },
+      {
+        "id": "afea326a-77d3-4413-afac-b472cf9b6f98",
+        "name": "Link to Profile",
+        "slug": "rrid:link-to-profile",
+        "schemaName": "URL",
+        "isRelation": false,
+        "isTitle": false,
+        "schema": null
+      }
+    ]
+  },
+  {
+    "id": "5b011313-59bc-44a1-a87a-d68660449b8e",
+    "description": "The rapid reviews of the preprint",
+    "name": "Review",
+    "communityId": "1c7f7ca0-9ac3-478e-b929-7526c37e4c6c",
+    "createdAt": "2025-03-07T15:33:44.333Z",
+    "updatedAt": "2025-03-07T15:33:44.333Z",
+    "fields": [
+      {
+        "id": "72138198-87bc-493c-984c-2cf6b540d0fb",
+        "name": "Title",
+        "slug": "rrid:title",
+        "schemaName": "String",
+        "isRelation": false,
+        "isTitle": false,
+        "schema": null
+      }
+    ]
+  },
+  {
+    "id": "88a68e83-a516-4400-9991-57038fd1e1bd",
+    "description": "The preprint being reviewed",
+    "name": "Preprint",
+    "communityId": "1c7f7ca0-9ac3-478e-b929-7526c37e4c6c",
+    "createdAt": "2025-03-07T15:33:29.402Z",
+    "updatedAt": "2025-03-07T15:33:29.402Z",
+    "fields": [
+      {
+        "id": "72138198-87bc-493c-984c-2cf6b540d0fb",
+        "name": "Title",
+        "slug": "rrid:title",
+        "schemaName": "String",
+        "isRelation": false,
+        "isTitle": true,
+        "schema": null
+      },
+      {
+        "id": "799e27a1-0395-4589-a986-ebdb64b2b9c8",
+        "name": "Abstract",
+        "slug": "rrid:abstract",
+        "schemaName": "RichText",
+        "isRelation": false,
+        "isTitle": false,
+        "schema": null
+      },
+      {
+        "id": "b25cfd41-3acc-4ee1-a3f9-f249e41ea4f1",
+        "name": "Domain",
+        "slug": "rrid:domain",
+        "schemaName": "StringArray",
+        "isRelation": false,
+        "isTitle": false,
+        "schema": null
+      },
+      {
+        "id": "99de9424-94fd-405f-aeab-3bf2faa06b51",
+        "name": "Team",
+        "slug": "rrid:team",
+        "schemaName": "StringArray",
+        "isRelation": false,
+        "isTitle": false,
+        "schema": null
+      },
+      {
+        "id": "5315e3a0-5b0d-406a-841d-1d22da155ec0",
+        "name": "DOI",
+        "slug": "rrid:doi",
+        "schemaName": "String",
+        "isRelation": false,
+        "isTitle": false,
+        "schema": null
+      }
+    ]
+  }
+]
