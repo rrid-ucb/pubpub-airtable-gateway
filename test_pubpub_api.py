@@ -11,7 +11,13 @@ load_dotenv()
 
 # API credentials from environment
 API_KEY = os.getenv("PUBPUB_API_KEY")
+# COMMUNITY_SLUG = os.getenv("COMMUNITY_SLUG", "rr-demo")
 COMMUNITY_SLUG = os.getenv("COMMUNITY_SLUG", "rrid")
+if COMMUNITY_SLUG == "rrid":
+    API_KEY = os.getenv("PUBPUB_API_KEY_RRID")
+elif COMMUNITY_SLUG == "rr-demo":
+    API_KEY = os.getenv("PUBPUB_API_KEY_DEMO")
+
 
 if not API_KEY:
     raise ValueError("PUBPUB_API_KEY environment variable is not set")
