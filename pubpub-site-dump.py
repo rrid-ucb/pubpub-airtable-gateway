@@ -8,6 +8,18 @@ from pathlib import Path
 from dotenv import load_dotenv
 from typing import Dict, List, Optional, Any
 
+# Directory paths
+REPORTS_DIR = Path("reports")
+CONFIG_BACKUP_DIR = Path("config_backup")
+LOGS_DIR = Path("logs")
+OUTPUT_DIR = Path("output")
+
+# Create directories if they don't exist
+REPORTS_DIR.mkdir(exist_ok=True)
+CONFIG_BACKUP_DIR.mkdir(exist_ok=True)
+LOGS_DIR.mkdir(exist_ok=True)
+OUTPUT_DIR.mkdir(exist_ok=True)
+
 # Load environment variables
 load_dotenv()
 
@@ -62,6 +74,14 @@ def save_json(data: Any, filename: str) -> None:
     with open(filepath, 'w', encoding='utf-8') as f:
         json.dump(data, f, indent=2, ensure_ascii=False)
     print(f"✅ Saved {filename}")
+    
+    # Also save to CONFIG_BACKUP_DIR for important configuration files
+    if filename in ["pub_types.json", "stages.json", "fields.json"]:
+        backup_filename = f"{filename.split('.')[0]}_{TIMESTAMP}.json"
+        backup_filepath = CONFIG_BACKUP_DIR / backup_filename
+        with open(backup_filepath, 'w', encoding='utf-8') as f:
+            json.dump(data, f, indent=2, ensure_ascii=False)
+        print(f"✅ Backup saved to {backup_filepath}")
 
 def fetch_data(endpoint: str, description: str) -> Optional[Any]:
     """Fetch data from an API endpoint with improved error handling"""
@@ -173,11 +193,57 @@ def generate_report(stages: Optional[List[Dict]] = None) -> None:
         ]
         for url in urls:
             f.write(f"- [{url}]({url})\n")
+    
+    # Also save a copy to the REPORTS_DIR
+    report_copy_file = REPORTS_DIR / f"pubpub_dump_report_{TIMESTAMP}.md"
+    with open(report_copy_file, "w") as f:
+        f.write(f"# PubPub Site Dump Report\n\n")
+        f.write(f"Generated on: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}\n\n")
+        f.write(f"Community: {COMMUNITY_SLUG}\n\n")
+        f.write(f"Original dump directory: {DUMP_DIR}\n\n")
+        
+        # List all dumped files
+        f.write("## Dumped Files\n\n")
+        for file in sorted(DUMP_DIR.glob("*.json")):
+            f.write(f"- {file.name}\n")
+        
+        # Add workflow visualization if stages data is available
+        if stages:
+            f.write("\n## Workflow Visualization\n\n")
+            f.write(generate_workflow_diagram(stages))
+            f.write("\n\n")
+            f.write(generate_stage_stats(stages))
+            f.write("\n\n")
+        
+        # Add site URLs
+        f.write("\n## Site URLs\n\n")
+        urls = [
+            "https://app.pubpub.org/c/rrid",
+            "https://app.pubpub.org/c/rrid/pubs",
+            "https://app.pubpub.org/c/rrid/stages",
+            "https://app.pubpub.org/c/rrid/activity/actions",
+            "https://app.pubpub.org/c/rrid/stages/manage",
+            "https://app.pubpub.org/c/rrid/forms",
+            "https://app.pubpub.org/c/rrid/types",
+            "https://app.pubpub.org/c/rrid/fields",
+            "https://app.pubpub.org/c/rrid/members",
+            "https://app.pubpub.org/c/rrid/settings/tokens",
+            "https://app.pubpub.org/c/rrid/developers/docs#/"
+        ]
+        for url in urls:
+            f.write(f"- [{url}]({url})\n")
+    
+    print(f"✅ Report saved to {report_file}")
+    print(f"✅ Report copy saved to {report_copy_file}")
 
 def main():
     """Main function to dump all site data"""
     print(f"\nStarting PubPub site dump for community: {COMMUNITY_SLUG}")
     print(f"Dump directory: {DUMP_DIR}")
+    
+    # Setup a log file
+    log_file = LOGS_DIR / f"pubpub_dump_{TIMESTAMP}.log"
+    print(f"Log file: {log_file}")
     
     # Dictionary to store all fetched data
     data = {}

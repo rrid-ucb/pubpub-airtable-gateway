@@ -10,9 +10,15 @@ from datetime import datetime
 from dotenv import load_dotenv
 from pathlib import Path
 import glob
+import random
+import time
 
 # Import the mock data generator
 from airtable_mock_data import save_mock_data
+
+# Set up constants
+AIRTABLE_DATA_FILE = "airtable_mock_data.json"
+DEFAULT_OUTPUT_DIR = "output"
 
 # Generate a timestamp for logs and output files
 TIMESTAMP = datetime.now().strftime("%Y%m%d_%H%M%S")
@@ -24,7 +30,7 @@ def setup_logging(debug=False):
     if not os.path.exists(log_dir):
         os.makedirs(log_dir)
     
-    timestamp = datetime.datetime.now().strftime("%Y%m%d_%H%M%S")
+    timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
     log_file = f"{log_dir}/pubpub_dryrun_{timestamp}.log"
     
     log_level = logging.DEBUG if debug else logging.INFO
@@ -653,17 +659,24 @@ class PubPubDryRun:
         self.logger.info("Mock data processing complete")
         return True
     
-    def save_results(self, directory="output"):
-        """Save the results of the dry run to a JSON file."""
-        ensure_output_dir(directory)
-        timestamp = datetime.datetime.now().strftime("%Y%m%d_%H%M%S")
-        filename = f"{directory}/pubpub_dryrun_{self.community_slug}_{timestamp}.json"
+    def save_results(self, output_dir=None):
+        """Save the dry run results to a JSON file"""
+        if not output_dir:
+            output_dir = "data_backup"
+            
+        # Create output directory if it doesn't exist
+        os.makedirs(output_dir, exist_ok=True)
         
-        with open(filename, 'w') as f:
+        # Create a timestamped filename
+        timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
+        output_file = f"{output_dir}/dryrun_{self.community_slug}_{timestamp}.json"
+        
+        # Save the results to JSON
+        with open(output_file, "w") as f:
             json.dump(self.results, f, indent=2)
-        
-        self.logger.info(f"Dry run results saved to {filename}")
-        return filename
+            
+        self.logger.info(f"Dry run results saved to {output_file}")
+        return output_file
 
 def parse_arguments():
     """Parse command line arguments."""

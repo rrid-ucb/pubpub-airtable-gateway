@@ -1,0 +1,545 @@
+{
+  "success": [
+    {
+      "test": "Get Pub Types",
+      "success": true,
+      "message": "Found 3 pub types",
+      "timestamp": "2025-04-24T10:56:37.802926",
+      "pub_data": [
+        {
+          "id": "a259328d-5748-412f-a7c4-98d4dfef01f9",
+          "description": "Reviewer information",
+          "name": "Reviewer",
+          "communityId": "1c7f7ca0-9ac3-478e-b929-7526c37e4c6c",
+          "createdAt": "2025-03-07T15:33:59.872Z",
+          "updatedAt": "2025-03-07T15:33:59.872Z",
+          "fields": [
+            {
+              "id": "72138198-87bc-493c-984c-2cf6b540d0fb",
+              "name": "Title",
+              "slug": "rrid:title",
+              "schemaName": "String",
+              "isRelation": false,
+              "isTitle": false,
+              "schema": null
+            },
+            {
+              "id": "99c78b1d-bd92-4f41-a260-f64eeeb2e5c8",
+              "name": "Reviewer Name",
+              "slug": "rrid:reviewer-name",
+              "schemaName": "String",
+              "isRelation": false,
+              "isTitle": true,
+              "schema": null
+            },
+            {
+              "id": "5d69c583-57d0-4ddf-87ac-062664b2fcc5",
+              "name": "Reviewer Email",
+              "slug": "rrid:reviewer-email",
+              "schemaName": "Email",
+              "isRelation": false,
+              "isTitle": false,
+              "schema": null
+            },
+            {
+              "id": "09538dc4-a224-4965-9804-ea0e147feceb",
+              "name": "Justification for Invite",
+              "slug": "rrid:justification-for-invite",
+              "schemaName": "String",
+              "isRelation": false,
+              "isTitle": false,
+              "schema": null
+            },
+            {
+              "id": "6d16802e-ce35-4625-a60d-0cfa77878b1a",
+              "name": "Affiliation",
+              "slug": "rrid:affiliation",
+              "schemaName": "String",
+              "isRelation": false,
+              "isTitle": false,
+              "schema": null
+            },
+            {
+              "id": "ccb5ad75-e9e0-4b1b-996d-851b29889fd4",
+              "name": "Reviewer Title",
+              "slug": "rrid:reviewer-title",
+              "schemaName": "String",
+              "isRelation": false,
+              "isTitle": false,
+              "schema": null
+            },
+            {
+              "id": "171f678c-bcef-4c0a-84a1-88f05f9bbe95",
+              "name": "Highest Degree",
+              "slug": "rrid:highest-degree",
+              "schemaName": "StringArray",
+              "isRelation": false,
+              "isTitle": false,
+              "schema": null
+            },
+            {
+              "id": "7f5bd937-6a6f-4ed6-8db7-4745ce17db61",
+              "name": "Subdiscipline",
+              "slug": "rrid:subdiscipline",
+              "schemaName": "String",
+              "isRelation": false,
+              "isTitle": false,
+              "schema": null
+            },
+            {
+              "id": "afea326a-77d3-4413-afac-b472cf9b6f98",
+              "name": "Link to Profile",
+              "slug": "rrid:link-to-profile",
+              "schemaName": "URL",
+              "isRelation": false,
+              "isTitle": false,
+              "schema": null
+            }
+          ]
+        },
+        {
+          "id": "5b011313-59bc-44a1-a87a-d68660449b8e",
+          "description": "The rapid reviews of the preprint",
+          "name": "Review",
+          "communityId": "1c7f7ca0-9ac3-478e-b929-7526c37e4c6c",
+          "createdAt": "2025-03-07T15:33:44.333Z",
+          "updatedAt": "2025-03-07T15:33:44.333Z",
+          "fields": [
+            {
+              "id": "72138198-87bc-493c-984c-2cf6b540d0fb",
+              "name": "Title",
+              "slug": "rrid:title",
+              "schemaName": "String",
+              "isRelation": false,
+              "isTitle": false,
+              "schema": null
+            }
+          ]
+        },
+        {
+          "id": "88a68e83-a516-4400-9991-57038fd1e1bd",
+          "description": "The preprint being reviewed",
+          "name": "Preprint",
+          "communityId": "1c7f7ca0-9ac3-478e-b929-7526c37e4c6c",
+          "createdAt": "2025-03-07T15:33:29.402Z",
+          "updatedAt": "2025-03-07T15:33:29.402Z",
+          "fields": [
+            {
+              "id": "72138198-87bc-493c-984c-2cf6b540d0fb",
+              "name": "Title",
+              "slug": "rrid:title",
+              "schemaName": "String",
+              "isRelation": false,
+              "isTitle": true,
+              "schema": null
+            },
+            {
+              "id": "799e27a1-0395-4589-a986-ebdb64b2b9c8",
+              "name": "Abstract",
+              "slug": "rrid:abstract",
+              "schemaName": "RichText",
+              "isRelation": false,
+              "isTitle": false,
+              "schema": null
+            },
+            {
+              "id": "b25cfd41-3acc-4ee1-a3f9-f249e41ea4f1",
+              "name": "Domain",
+              "slug": "rrid:domain",
+              "schemaName": "StringArray",
+              "isRelation": false,
+              "isTitle": false,
+              "schema": null
+            },
+            {
+              "id": "99de9424-94fd-405f-aeab-3bf2faa06b51",
+              "name": "Team",
+              "slug": "rrid:team",
+              "schemaName": "StringArray",
+              "isRelation": false,
+              "isTitle": false,
+              "schema": null
+            },
+            {
+              "id": "5315e3a0-5b0d-406a-841d-1d22da155ec0",
+              "name": "DOI",
+              "slug": "rrid:doi",
+              "schemaName": "String",
+              "isRelation": false,
+              "isTitle": false,
+              "schema": null
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "test": "Get Stages",
+      "success": true,
+      "message": "Found 13 stages",
+      "timestamp": "2025-04-24T10:56:38.330412",
+      "pub_data": [
+        {
+          "moveConstraints": [
+            {
+              "id": "19c1f319-e8b8-4d63-b746-7645b2c996eb",
+              "name": "Review Under Edit"
+            }
+          ],
+          "moveConstraintSources": [
+            {
+              "id": "b45d0e6d-3681-46f6-be8f-78dc0b3af99a",
+              "name": "Review Accepted"
+            }
+          ],
+          "pubsCount": 0,
+          "memberCount": 0,
+          "actionInstancesCount": 4,
+          "id": "0aaad7f7-0860-4fa5-b692-2ba3096b9894",
+          "createdAt": "2025-03-07T14:52:28.015Z",
+          "updatedAt": "2025-03-07T14:52:36.170Z",
+          "name": "Review Completed",
+          "order": "aa",
+          "communityId": "1c7f7ca0-9ac3-478e-b929-7526c37e4c6c"
+        },
+        {
+          "moveConstraints": [
+            {
+              "id": "3dc7d230-6421-4990-aa2b-ed65b9287ffa",
+              "name": "Preprint Ready for Publication"
+            }
+          ],
+          "moveConstraintSources": [
+            {
+              "id": "9239890d-fbad-4ce9-8173-8c708e451b08",
+              "name": "Preprint Assigned"
+            }
+          ],
+          "pubsCount": 0,
+          "memberCount": 0,
+          "actionInstancesCount": 4,
+          "id": "1885b74a-9c28-4d3c-ae82-a61fabda329e",
+          "createdAt": "2025-03-07T14:49:14.022Z",
+          "updatedAt": "2025-03-07T14:49:25.911Z",
+          "name": "Preprint Under Review",
+          "order": "aa",
+          "communityId": "1c7f7ca0-9ac3-478e-b929-7526c37e4c6c"
+        },
+        {
+          "moveConstraints": [
+            {
+              "id": "30c5c208-c85c-4355-b17f-74ac081a2b44",
+              "name": "Preprint + Reviews Published"
+            }
+          ],
+          "moveConstraintSources": [
+            {
+              "id": "1885b74a-9c28-4d3c-ae82-a61fabda329e",
+              "name": "Preprint Under Review"
+            }
+          ],
+          "pubsCount": 0,
+          "memberCount": 0,
+          "actionInstancesCount": 1,
+          "id": "3dc7d230-6421-4990-aa2b-ed65b9287ffa",
+          "createdAt": "2025-03-07T14:49:31.527Z",
+          "updatedAt": "2025-03-07T14:49:45.825Z",
+          "name": "Preprint Ready for Publication",
+          "order": "aa",
+          "communityId": "1c7f7ca0-9ac3-478e-b929-7526c37e4c6c"
+        },
+        {
+          "moveConstraints": [
+            {
+              "id": "9239890d-fbad-4ce9-8173-8c708e451b08",
+              "name": "Preprint Assigned"
+            }
+          ],
+          "moveConstraintSources": [
+            {
+              "id": "ae579d09-ed1c-42fa-85d1-6e2d5bb93744",
+              "name": "Build Content\\Preprint Initiation"
+            }
+          ],
+          "pubsCount": 0,
+          "memberCount": 0,
+          "actionInstancesCount": 1,
+          "id": "bc114211-efe7-4b0a-96ce-1d3e0872a121",
+          "createdAt": "2025-03-07T14:48:11.019Z",
+          "updatedAt": "2025-03-07T14:48:20.936Z",
+          "name": "Preprint Unassigned",
+          "order": "aa",
+          "communityId": "1c7f7ca0-9ac3-478e-b929-7526c37e4c6c"
+        },
+        {
+          "moveConstraints": [
+            {
+              "id": "1885b74a-9c28-4d3c-ae82-a61fabda329e",
+              "name": "Preprint Under Review"
+            }
+          ],
+          "moveConstraintSources": [
+            {
+              "id": "bc114211-efe7-4b0a-96ce-1d3e0872a121",
+              "name": "Preprint Unassigned"
+            }
+          ],
+          "pubsCount": 0,
+          "memberCount": 0,
+          "actionInstancesCount": 0,
+          "id": "9239890d-fbad-4ce9-8173-8c708e451b08",
+          "createdAt": "2025-03-07T14:43:54.145Z",
+          "updatedAt": "2025-03-07T14:48:33.789Z",
+          "name": "Preprint Assigned",
+          "order": "aa",
+          "communityId": "1c7f7ca0-9ac3-478e-b929-7526c37e4c6c"
+        },
+        {
+          "moveConstraints": [],
+          "moveConstraintSources": [
+            {
+              "id": "19c1f319-e8b8-4d63-b746-7645b2c996eb",
+              "name": "Review Under Edit"
+            }
+          ],
+          "pubsCount": 0,
+          "memberCount": 0,
+          "actionInstancesCount": 0,
+          "id": "ef5c6b80-924f-4288-ae58-c4ca6f15ad81",
+          "createdAt": "2025-03-07T15:16:26.812Z",
+          "updatedAt": "2025-04-01T21:02:23.400Z",
+          "name": "Review QA Complete",
+          "order": "aa",
+          "communityId": "1c7f7ca0-9ac3-478e-b929-7526c37e4c6c"
+        },
+        {
+          "moveConstraints": [
+            {
+              "id": "07204a4c-7b98-4a7e-b377-62912869c526",
+              "name": "Review Declined"
+            },
+            {
+              "id": "b45d0e6d-3681-46f6-be8f-78dc0b3af99a",
+              "name": "Review Accepted"
+            },
+            {
+              "id": "7887dc40-e031-4154-b23f-52ddab597216",
+              "name": "Review No Response"
+            }
+          ],
+          "moveConstraintSources": [],
+          "pubsCount": 0,
+          "memberCount": 0,
+          "actionInstancesCount": 4,
+          "id": "8195bcde-0a64-4711-8baa-0907efc573f0",
+          "createdAt": "2025-03-07T14:46:01.241Z",
+          "updatedAt": "2025-03-07T14:50:46.657Z",
+          "name": "Review Invitations Sent",
+          "order": "aa",
+          "communityId": "1c7f7ca0-9ac3-478e-b929-7526c37e4c6c"
+        },
+        {
+          "moveConstraints": [
+            {
+              "id": "0aaad7f7-0860-4fa5-b692-2ba3096b9894",
+              "name": "Review Completed"
+            }
+          ],
+          "moveConstraintSources": [
+            {
+              "id": "8195bcde-0a64-4711-8baa-0907efc573f0",
+              "name": "Review Invitations Sent"
+            }
+          ],
+          "pubsCount": 0,
+          "memberCount": 0,
+          "actionInstancesCount": 2,
+          "id": "b45d0e6d-3681-46f6-be8f-78dc0b3af99a",
+          "createdAt": "2025-03-07T14:46:29.304Z",
+          "updatedAt": "2025-03-07T14:51:12.337Z",
+          "name": "Review Accepted",
+          "order": "aa",
+          "communityId": "1c7f7ca0-9ac3-478e-b929-7526c37e4c6c"
+        },
+        {
+          "moveConstraints": [],
+          "moveConstraintSources": [
+            {
+              "id": "8195bcde-0a64-4711-8baa-0907efc573f0",
+              "name": "Review Invitations Sent"
+            }
+          ],
+          "pubsCount": 0,
+          "memberCount": 0,
+          "actionInstancesCount": 0,
+          "id": "07204a4c-7b98-4a7e-b377-62912869c526",
+          "createdAt": "2025-03-07T14:46:38.969Z",
+          "updatedAt": "2025-03-07T14:51:18.398Z",
+          "name": "Review Declined",
+          "order": "aa",
+          "communityId": "1c7f7ca0-9ac3-478e-b929-7526c37e4c6c"
+        },
+        {
+          "moveConstraints": [
+            {
+              "id": "bc114211-efe7-4b0a-96ce-1d3e0872a121",
+              "name": "Preprint Unassigned"
+            }
+          ],
+          "moveConstraintSources": [],
+          "pubsCount": 0,
+          "memberCount": 0,
+          "actionInstancesCount": 0,
+          "id": "ae579d09-ed1c-42fa-85d1-6e2d5bb93744",
+          "createdAt": "2025-03-07T14:43:25.669Z",
+          "updatedAt": "2025-03-07T14:56:09.010Z",
+          "name": "Build Content\\Preprint Initiation",
+          "order": "aa",
+          "communityId": "1c7f7ca0-9ac3-478e-b929-7526c37e4c6c"
+        },
+        {
+          "moveConstraints": [],
+          "moveConstraintSources": [
+            {
+              "id": "8195bcde-0a64-4711-8baa-0907efc573f0",
+              "name": "Review Invitations Sent"
+            }
+          ],
+          "pubsCount": 0,
+          "memberCount": 0,
+          "actionInstancesCount": 0,
+          "id": "7887dc40-e031-4154-b23f-52ddab597216",
+          "createdAt": "2025-03-07T14:46:50.800Z",
+          "updatedAt": "2025-03-07T14:51:41.287Z",
+          "name": "Review No Response",
+          "order": "aa",
+          "communityId": "1c7f7ca0-9ac3-478e-b929-7526c37e4c6c"
+        },
+        {
+          "moveConstraints": [
+            {
+              "id": "ef5c6b80-924f-4288-ae58-c4ca6f15ad81",
+              "name": "Review QA Complete"
+            }
+          ],
+          "moveConstraintSources": [
+            {
+              "id": "0aaad7f7-0860-4fa5-b692-2ba3096b9894",
+              "name": "Review Completed"
+            }
+          ],
+          "pubsCount": 0,
+          "memberCount": 0,
+          "actionInstancesCount": 2,
+          "id": "19c1f319-e8b8-4d63-b746-7645b2c996eb",
+          "createdAt": "2025-03-07T14:54:44.901Z",
+          "updatedAt": "2025-03-07T15:16:22.161Z",
+          "name": "Review Under Edit",
+          "order": "aa",
+          "communityId": "1c7f7ca0-9ac3-478e-b929-7526c37e4c6c"
+        },
+        {
+          "moveConstraints": [],
+          "moveConstraintSources": [
+            {
+              "id": "3dc7d230-6421-4990-aa2b-ed65b9287ffa",
+              "name": "Preprint Ready for Publication"
+            }
+          ],
+          "pubsCount": 0,
+          "memberCount": 0,
+          "actionInstancesCount": 0,
+          "id": "30c5c208-c85c-4355-b17f-74ac081a2b44",
+          "createdAt": "2025-03-07T14:49:53.066Z",
+          "updatedAt": "2025-03-07T15:27:09.718Z",
+          "name": "Preprint + Reviews Published",
+          "order": "aa",
+          "communityId": "1c7f7ca0-9ac3-478e-b929-7526c37e4c6c"
+        }
+      ]
+    }
+  ],
+  "failure": [
+    {
+      "test": "Create Person Pub",
+      "success": false,
+      "message": "No person records found in Airtable",
+      "timestamp": "2025-04-24T10:56:38.926114",
+      "airtable_data": {
+        "table": "Person"
+      }
+    },
+    {
+      "test": "Create Institution Pub",
+      "success": false,
+      "message": "No institution records found in Airtable",
+      "timestamp": "2025-04-24T10:56:39.401325",
+      "airtable_data": {
+        "table": "Institution"
+      }
+    },
+    {
+      "test": "Create Role Pub",
+      "success": false,
+      "message": "No role records found in Airtable",
+      "timestamp": "2025-04-24T10:56:39.907383",
+      "airtable_data": {
+        "table": "Contributor roles"
+      }
+    },
+    {
+      "test": "Create Contributor Pub",
+      "success": false,
+      "message": "No contributor records found in Airtable",
+      "timestamp": "2025-04-24T10:56:40.430446",
+      "airtable_data": {
+        "table": "Role assignments"
+      }
+    },
+    {
+      "test": "Create Preprint Pub",
+      "success": false,
+      "message": "No preprint records found in Airtable",
+      "timestamp": "2025-04-24T10:56:40.951258",
+      "airtable_data": {
+        "table": "Preprint Info ONLY"
+      }
+    },
+    {
+      "test": "Create Reviewer Pub",
+      "success": false,
+      "message": "No reviewer records found in Airtable",
+      "timestamp": "2025-04-24T10:56:41.474933",
+      "airtable_data": {
+        "table": "Student Reviewer Inputs"
+      }
+    }
+  ],
+  "created_pubs": [],
+  "airtable_sources": {
+    "Create Person Pub": {
+      "table": "Person",
+      "url": "https://airtable.com/appPaMDffYVPHeUWI/Person"
+    },
+    "Create Institution Pub": {
+      "table": "Institution",
+      "url": "https://airtable.com/appPaMDffYVPHeUWI/Institution"
+    },
+    "Create Role Pub": {
+      "table": "Contributor roles",
+      "url": "https://airtable.com/appPaMDffYVPHeUWI/Contributor roles"
+    },
+    "Create Contributor Pub": {
+      "table": "Role assignments",
+      "url": "https://airtable.com/appPaMDffYVPHeUWI/Role assignments"
+    },
+    "Create Preprint Pub": {
+      "table": "Preprint Info ONLY",
+      "url": "https://airtable.com/appPaMDffYVPHeUWI/Preprint Info ONLY"
+    },
+    "Create Reviewer Pub": {
+      "table": "Student Reviewer Inputs",
+      "url": "https://airtable.com/appPaMDffYVPHeUWI/Student Reviewer Inputs"
+    }
+  }
+}

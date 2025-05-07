@@ -12,6 +12,7 @@
     "delete": "NODE_ENV=production node delete.js",
     "delete-dev": "dotenvx run -f .env -- node delete.js",
     "delete-prod": "NODE_ENV=production dotenvx run -f .env.production -- node delete.js",
-    "insert-temp-gdrive": "NODE_ENV=production dotenvx run -f .env.production -- node importFromGdrive.js"
+    "insert-temp-gdrive": "NODE_ENV=production dotenvx run -f .env.production -- node importFromGdrive.js",
+    "test-dev": "dotenvx run -f .env -- node import_dev.js"
   }
 }

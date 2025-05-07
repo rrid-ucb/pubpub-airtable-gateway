@@ -1,0 +1,17 @@
+{
+  "community": {},
+  "collections": [],
+  "publications": [],
+  "attributions": [],
+  "mock_calls": [],
+  "errors": [
+    {
+      "type": "request",
+      "message": "404 Client Error: Not Found for url: https://api.pubpub.org/graphql",
+      "query": "\n        query GetCommunity($slug: String!) {\n            community(slug: $slug) {\n                id\n                name\n                slug\n                description\n                createDate\n                updatedDate\n            }\n        }\n        ",
+      "variables": {
+        "slug": "rr-demo"
+      }
+    }
+  ]
+}

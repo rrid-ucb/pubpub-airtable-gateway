@@ -1,27 +1,46 @@
 import Airtable from "airtable";
 import airtableToPubPub from "./lib/airtableToPubPub.js";
 import slugify from "slugify";
+import getPubs from "./lib/getPubs.js";
 
-import { getRelatedPubsArray } from "./lib/utils.js";
+import { getRelatedPubsArray, baseHeaders } from "./lib/utils.js";
+
+// Debug information
+console.log("Starting import process...");
+console.log(`Community slug: ${process.env.COMMUNITY_SLUG}`);
+console.log(`Airtable Base ID: ${process.env.AIRTABLE_BASE_ID}`);
+console.log(`PubPub API Key (masked): ${process.env.PUBPUB_API_KEY.slice(0, 5)}...`);
 
 const pubTypes = {
-  narrative: process.env.NARRATIVE_TYPE_ID, //pubtype IDs
-  type: process.env.TYPE_TYPE_ID,
-  person: process.env.PERSON_TYPE_ID,
-  contributor: process.env.CONTRIBUTOR_TYPE_ID,
-  pub: process.env.PUB_TYPE_ID,
-  institutions: process.env.INSTITUTIONS_TYPE_ID,
-  roles: process.env.ROLES_TYPE_ID,
-  
-  //added for preprint and reviewer
   preprint: process.env.PREPRINT_TYPE_ID,
   reviewer: process.env.REVIEWER_TYPE_ID,
+  review: process.env.REVIEW_TYPE_ID
 };
 
 const stages = {
-  airtable: process.env.AIRTABLE_STAGE_ID,
-  nonPubs: process.env.NONPUBS_STAGE_ID,
+  airtable: process.env.AIRTABLE_STAGE_ID,  // Preprint Unassigned 
+  nonPubs: process.env.NONPUBS_STAGE_ID     // Build Content stage
 };
+
+console.log("Pub Types:", pubTypes);
+console.log("Stages:", stages);
+
+// Quick test of the API access
+console.log("Testing PubPub API connection...");
+const testUrl = `https://app.pubpub.org/api/v0/c/${process.env.COMMUNITY_SLUG}/site/pub-types`;
+fetch(testUrl, { headers: baseHeaders })
+  .then(response => {
+    if (!response.ok) {
+      console.error(`API Test failed: ${response.status} ${response.statusText}`);
+      console.error("Please check your API key and community slug.");
+      process.exit(1);
+    }
+    console.log("API connection successful! Continuing with import...");
+  })
+  .catch(error => {
+    console.error("API Test failed:", error);
+    process.exit(1);
+  });
 
 Airtable.configure({
   apiKey: process.env.AIRTABLE_API_KEY,
@@ -29,214 +48,117 @@ Airtable.configure({
 
 const airtable = Airtable.base(process.env.AIRTABLE_BASE_ID);
 
-const TYPE_PUBS = await airtableToPubPub(
-  airtable,
-  "Pub type",
-  pubTypes.type,
-  stages.nonPubs,
-  {
-    title: (record) => record.get("Name"),
-    slug: (record) =>
-      record.get("Slug") ?? slugify(record.get("Name"), { lower: true }),
-    "preview-image": (record) => record.get("Preview Image"),
-  },
-  "airtable-id"
-);
+// Test Airtable connection
+console.log("Testing Airtable connection...");
+airtable.table("Preprint Info ONLY").select({ maxRecords: 1 }).firstPage((err, records) => {
+  if (err) {
+    console.error("Airtable connection failed:", err);
+    process.exit(1);
+  }
+  
+  if (!records || records.length === 0) {
+    console.warn("No records found in 'Preprint Info ONLY' table. Please check your Airtable base.");
+  } else {
+    console.log(`Airtable connection successful! Found ${records.length} records.`);
+  }
+});
 
-const NARRATIVE_PUBS = await airtableToPubPub(
-  airtable,
-  "Project narratives",
-  pubTypes.narrative,
-  stages.nonPubs,
-  {
-    title: (record) => record.get("Name"),
-    slug: (record) =>
-      record.get("Slug") ??
-      (record.get("Link to PubPub") &&
-        record.get("Link to PubPub").split("/")[3]),
-    "google-drive-folder-url": (record) => record.get("Link to narrative"),
-    "icing-hashtags": (record) =>
-      record.get("Icing hashtag (from Icing status)"),
-  },
-  "airtable-id"
-);
+// Helper to safely slugify strings
+const safeSlugify = (str) => {
+  if (!str || typeof str !== 'string') return slugify('untitled', { lower: true });
+  return slugify(str, { lower: true });
+};
 
-
-//Is this a template for reviewers?
-const PEOPLE_PUBS = await airtableToPubPub(
+// Import Preprints first
+const PREPRINT_PUBS = await airtableToPubPub(
   airtable,
-  "Person",
-  pubTypes.person,
-  stages.nonPubs,
+  "Preprint Info ONLY",  // Airtable table name
+  pubTypes.preprint,
+  stages.airtable,
   {
-    "full-name": (record) => record.get("Name"),
-    slug: (record) =>
-      record.get("Slug") ?? slugify(record.get("Name"), { lower: true }),
-    orcid: (record) =>
-      /^(\d{4}-){3}\d{3}(\d|X)$/.test(record.get("ORCID"))
-        ? `https://orcid.org/${record.get("ORCID")}`
-        : undefined,
-    // avatar: (record) => record.get("Headshot"),
-  },
-  "airtable-id"
-);
-
-const ROLE_PUBS = await airtableToPubPub(
-  airtable,
-  "Contributor roles",
-  pubTypes.roles,
-  stages.nonPubs,
-  {
-    title: (record) => record.get("Role"),
-    "byline-role": (record) => record.get("Byline"),
-  },
-  "airtable-id"
-);
-
-const INSTITUTION_PUBS = await airtableToPubPub(
-  airtable,
-  "Institution",
-  pubTypes.institutions,
-  stages.nonPubs,
-  {
-    title: (record) => record.get("Name"),
-  },
-  "airtable-id"
-);
-
-const CONTRIBUTOR_PUBS = await airtableToPubPub(
-  airtable,
-  "Role assignments",
-  pubTypes.contributor,
-  stages.nonPubs,
-  {
-    "full-name": (record) => `${record.get("Contributors")}`,
-    "contributor-person": (record) =>
-      getRelatedPubsArray(
-        record.get("Contributor"),
-        PEOPLE_PUBS,
-        "airtable-id"
-      ),
-    affiliations: (record) =>
-      getRelatedPubsArray(
-        record.get("Institution"),
-        INSTITUTION_PUBS,
-        "airtable-id"
-      ),
-    roles: (record) =>
-      getRelatedPubsArray(record.get("Role"), ROLE_PUBS, "airtable-id"),
+    // Based on the Airtable schema analysis
+    "title": (record) => record.get("Title (from Selected)") || "Untitled Preprint",
+    "abstract": (record) => record.get("Abstract") || "",
+    "domain": (record) => {
+      const domain = record.get("Domain");
+      return domain && Array.isArray(domain) ? domain.join(", ") : "";
+    },
+    "team": (record) => record.get("Team/Domain") || "",
+    // Add preprint ID as a field for reference
+    "preprint-id": (record) => record.get("Preprint ID") || "",
+    // Generate slug from title
+    "slug": (record) => {
+      const customSlug = record.get("Slug");
+      if (customSlug && typeof customSlug === 'string') return customSlug;
+      
+      const title = record.get("Title (from Selected)");
+      return safeSlugify(title || "preprint");
+    }
   },
   "airtable-id",
-  ["Deleted from original contributor list"]
+  [],  // Empty array instead of null
+  "Grid view"  // Use Grid view instead of PubPub Platform Import view
 );
 
-const PUB_PUBS = await airtableToPubPub(
-    airtable,
-    "Pub",
-    pubTypes.pub,
-    stages.airtable,
-    {
-      title: (record) => record.get("Title"),
-      "pub-contributors": (record) =>
-        getRelatedPubsArray(
-          record.get("Active pub contributors"),
-          CONTRIBUTOR_PUBS,
-          "airtable-id"
-        ),
-      narratives: (record) =>
-        getRelatedPubsArray(
-          record.get("Project narrative"),
-          NARRATIVE_PUBS,
-          "airtable-id"
-        ),
-      "doi-url": (record) => record.get("DOI"),
-      doi: (record) =>
-        record.get("DOI") && record.get("DOI").split("https://doi.org/")[1],
-      "pub-url": (record) => record.get("Link to PubPub"),
-      slug: (record) =>
-        record.get("Slug") ??
-        (record.get("Link to PubPub") &&
-          record.get("Link to PubPub").split("/pub/")[1]),
-      "pub-content-types": (record) =>
-        getRelatedPubsArray(record.get("Pub type"), TYPE_PUBS, "airtable-id"),
-      "publication-date": (record) =>
-        record.get("Publication date") &&
-        new Date(record.get("Publication date")).toISOString(),
-      "google-drive-folder-url": (record) =>
-        record.get("Link to folder with assets"),
-      "typeform-url": (record) => record.get("Typeform link"),
-      "twitter-collection-url": (record) =>
-        record.get("Twitter collection link") &&
-        record.get("Twitter collection link")[0],
-      "icing-hashtags": (record) =>
-        record.get("Icing hashtag (from Icing hashtags)"),
-      "feedback-status": (record) => record.get("Current feedback status"),
-      "author-email": (record) =>
-        record.get("Point person email") &&
-        record.get("Point person email").toString(),
-      "social-count": (record) =>
-        record.get("Number of posts") && record.get("Number of posts")[0],
-    },
-    "airtable-id",
-    ["Internal pub for now", "New versions"]
-  );
+console.log(`Created/updated ${PREPRINT_PUBS.length} preprint publications`);
 
-const PREPRINT_PUBS = await airtableToPubPub(
-    airtable,
-    "Preprint Info ONLY",
-    pubTypes.preprint,
-    stages.airtable,
-    {
-      "title": (record) => record.get("Title (from Selected)"),
-      "abstract": (record) => record.get("Abstract"),
-      "domain": (record) => record.get("Domain"),
-      "team": (record) => record.get("Team/Domain"),
-     // 'keywords': (record) => record.get("Keywords"),
-      "doi-url": (record) => record.get("Link/DOI (from Selected)"),
-     
-    //NOTE: Sometimes the link is not a doi. may have to have alternative parsing here.
-      "doi": (record) =>
-        record.get("Link/DOI (from Selected)") && record.get("Link/DOI (from Selected)").split("https://doi.org/")[1],
-      
-
-    //NOTE: Two fields with inconsistencies in formatting. Author_corr will have just name, just email, or both. example: 
-    //David S Khoury (dkhoury@kirby.unsw.edu.au). Can create a field that regex this in airtable.
-    //'Author Email' is a regex of this field, so sometimes has errors when its not in the above format.
-     "author-email": (record) =>
-        record.get("Author Email") && 
-        record.get("Author Email").toString(),
-  
-      "preprint-id": (record) => record.get("Preprint ID"),
-      slug: (record) => 
-        record.get("Slug") ?? slugify(record.get("Title (from Selected)"), { lower: true }),
-    },
-    "airtable-id"
-);
-
+// Then import Reviewers with references to Preprints
 const REVIEWER_PUBS = await airtableToPubPub(
-    airtable,
-    "Student Reviewer Inputs",
-    pubTypes.reviewer,
-    stages.airtable,
-    {
-      "reviewer-name": (record) => record.get("First + Last Name"), //NOTE: we have a first and last name field. this is the concatenated version
-      "email": (record) => record.get("Reviewer Email"),
-      "justification-for-invite": (record) => record.get("Justification for Invite"),
-      "affiliation": (record) => record.get("Affiliation"),
-      "reviewer-title": (record) => record.get("Reviewer Title"),
-      "highest-degree": (record) => record.get("Highest Degree"),
-      "subdiscipline": (record) => record.get("Subdiscipline"),
-      "link-to-profile": (record) => record.get("Link to Profile"),
+  airtable,
+  "Student Reviewer Inputs",  // Airtable table name
+  pubTypes.reviewer,
+  stages.nonPubs,
+  {
+    // Based on the expected fields for Reviewers
+    "reviewer-name": (record) => {
+      const fullName = record.get("First + Last Name");
+      if (fullName && typeof fullName === 'string') return fullName;
       
-      "associated-preprint": (record) =>
-        getRelatedPubsArray(
-          record.get("Preprint ID (pulled)"),
-          PREPRINT_PUBS,
-          "airtable-id"
-        ),
-      slug: (record) => 
-        record.get("Slug") ?? 
-        slugify(`${record.get("First Name (Proposed Reviewer)")}-${record.get("Last Name (Proposed Reviewer)")}`, { lower: true }),
+      const firstName = record.get("First Name (Proposed Reviewer)") || "";
+      const lastName = record.get("Last Name (Proposed Reviewer)") || "";
+      return (firstName + " " + lastName).trim() || "Unnamed Reviewer";
     },
-    "airtable-id"
+    "email": (record) => record.get("Reviewer Email") || "",
+    "justification-for-invite": (record) => record.get("Justification for Invite") || "",
+    "affiliation": (record) => record.get("Affiliation") || "",
+    "reviewer-title": (record) => record.get("Reviewer Title") || "",
+    "highest-degree": (record) => record.get("Highest Degree") || "",
+    "subdiscipline": (record) => record.get("Subdiscipline") || "",
+    "link-to-profile": (record) => record.get("Link to Profile") || "",
+    
+    // Reference to associated preprint - using the preprint ID to match
+    "associated-preprint": (record) => {
+      const preprintId = record.get("Preprint ID (pulled)");
+      if (!preprintId) return [];
+      
+      return getRelatedPubsArray(
+        preprintId,
+        PREPRINT_PUBS,
+        "airtable-id"
+      );
+    },
+      
+    // Generate slug from name
+    "slug": (record) => {
+      const customSlug = record.get("Slug");
+      if (customSlug && typeof customSlug === 'string') return customSlug;
+      
+      const firstName = record.get("First Name (Proposed Reviewer)") || "";
+      const lastName = record.get("Last Name (Proposed Reviewer)") || "";
+      const fullName = record.get("First + Last Name") || "";
+      
+      if (firstName && lastName) {
+        return safeSlugify(`${firstName}-${lastName}`);
+      } else if (fullName) {
+        return safeSlugify(fullName);
+      } else {
+        return safeSlugify("reviewer-" + Date.now());
+      }
+    }
+  },
+  "airtable-id",
+  [],  // Empty array instead of null
+  "Grid view"  // Use Grid view instead of PubPub Platform Import view
 );
+
+console.log(`Created/updated ${REVIEWER_PUBS.length} reviewer publications`);
