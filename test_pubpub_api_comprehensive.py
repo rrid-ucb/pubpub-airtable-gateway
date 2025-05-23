@@ -9,6 +9,19 @@ from datetime import datetime
 from dotenv import load_dotenv
 from airtable import Airtable
 from slugify import slugify
+from pathlib import Path
+
+# Directory paths
+REPORTS_DIR = Path("reports")
+LOGS_DIR = Path("logs")
+OUTPUT_DIR = Path("output")
+DATA_BACKUP_DIR = Path("data_backup")
+
+# Create directories if they don't exist
+REPORTS_DIR.mkdir(exist_ok=True)
+LOGS_DIR.mkdir(exist_ok=True)
+OUTPUT_DIR.mkdir(exist_ok=True)
+DATA_BACKUP_DIR.mkdir(exist_ok=True)
 
 # Load environment variables
 load_dotenv()
@@ -21,7 +34,7 @@ AIRTABLE_API_KEY = os.getenv("AIRTABLE_API_KEY")
 PUBPUB_API_KEY = os.getenv("PUBPUB_API_KEY")
 
 # Setup logging
-log_file = f"test_run_{TIMESTAMP}.log"
+log_file = LOGS_DIR / f"test_run_{TIMESTAMP}.log"
 logging.basicConfig(
     level=logging.INFO,
     format='%(asctime)s - %(levelname)s - %(message)s',
@@ -109,11 +122,17 @@ def get_stages():
         log_result("Get Stages", False, str(e))
         return None
 
-def get_airtable_records(table_name, view_name="PubPub Platform Import"):
+def get_airtable_records(table_name, view_name="Grid view"):
     """Get records from Airtable"""
     try:
         table = Airtable(AIRTABLE_BASE_ID, table_name, api_key=AIRTABLE_API_KEY)
         records = table.get_all(view=view_name)
+        
+        # Save retrieved records to data_backup
+        backup_file = DATA_BACKUP_DIR / f"airtable_{table_name.lower().replace(' ', '_')}_{TIMESTAMP}.json"
+        with open(backup_file, "w") as f:
+            json.dump(records, f, indent=2)
+        
         return records
     except Exception as e:
         logger.error(f"Error getting Airtable records: {str(e)}")
@@ -318,7 +337,7 @@ def create_reviewer_pub():
 
 def generate_report():
     """Generate a markdown report of the test run"""
-    report_file = f"REPORT-{TIMESTAMP}.md"
+    report_file = REPORTS_DIR / f"REPORT-{TIMESTAMP}.md"
     
     with open(report_file, "w") as f:
         f.write(f"# PubPub API Test Report\n\n")
@@ -362,6 +381,16 @@ def generate_report():
         
         f.write("\n## Log File\n\n")
         f.write(f"For detailed logs, see: `{log_file}`\n")
+    
+    # Also save the test results as JSON for later analysis
+    results_file = OUTPUT_DIR / f"test_results_{TIMESTAMP}.json"
+    with open(results_file, "w") as f:
+        json.dump(test_results, f, indent=2)
+    
+    logger.info(f"Report saved to {report_file}")
+    logger.info(f"Test results saved to {results_file}")
+    
+    return report_file
 
 def main():
     """Run all tests"""
@@ -393,8 +422,8 @@ def main():
         for test in test_results["failure"]:
             logger.error(f"  - {test['test']}: {test['message']}")
     
-    generate_report()
-    logger.info(f"\nTest report generated: REPORT-{TIMESTAMP}.md")
+    report_file = generate_report()
+    logger.info(f"\nTest report generated: {report_file}")
 
 if __name__ == "__main__":
     main() 

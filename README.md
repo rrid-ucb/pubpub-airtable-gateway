@@ -1,3 +1,77 @@
+# PubPub Airtable Gateway
+
+This project provides scripts to interact with PubPub API using Airtable data.
+
+## Scripts
+
+### 1. `airtable_mock_data.py`
+
+Generates mock Airtable data for testing purposes.
+
+```bash
+python airtable_mock_data.py
+```
+
+This will create mock data for:
+- Preprints
+- Reviewers
+- Reviews
+- Persons
+- Institutions
+- Contributor roles
+- Role assignments
+
+The data is saved in the `output/` directory with a timestamp.
+
+### 2. `pubpub_dryrun.py`
+
+Performs a dry run against the PubPub API using mock Airtable data.
+
+```bash
+# Run with default settings (both rrid and rr-demo communities)
+python pubpub_dryrun.py
+
+# Run with specific community
+python pubpub_dryrun.py --community rrid
+
+# Use a specific mock data file
+python pubpub_dryrun.py --mock-file output/mock_airtable_data_20230501_120000.json
+```
+
+This script will:
+1. Set up detailed logging
+2. Generate or use existing mock Airtable data
+3. Read the current PubPub configuration for the selected community(s)
+4. Map the Airtable data to PubPub objects
+5. Generate mock operations (reads are real, writes are mocked)
+6. Save the operations to a file
+
+## Setup
+
+1. Create a `.env` file with the following variables:
+```
+PUBPUB_API_KEY=your_pubpub_api_key
+AIRTABLE_API_KEY=your_airtable_api_key
+```
+
+2. Install dependencies:
+```bash
+pip install -r requirements.txt
+```
+
+## Requirements
+
+- Python 3.6+
+- requests
+- python-dotenv
+- Any additional libraries used by the scripts
+
+## Output
+
+- Mock Airtable data is saved in `output/mock_airtable_data_[timestamp].json`
+- Dry run results are saved in `dryrun_results/dryrun_[community]_[timestamp].json`
+- Logs are saved in `logs/dryrun_log_[timestamp].log`
+
 # Airtable Gateway Template
 
 This package contains a series of scripts and convenience functions used to sync content from [Airtable](https://airtable.com) bases to [PubPub Platform](https://knowledgefutures.org/platform) using the two system's APIs.

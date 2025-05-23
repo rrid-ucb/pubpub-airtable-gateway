@@ -5,13 +5,30 @@ import requests
 import json
 from datetime import datetime
 from dotenv import load_dotenv
+from pathlib import Path
+
+# Directory paths
+REPORTS_DIR = Path("reports")
+CONFIG_BACKUP_DIR = Path("config_backup")
+LOGS_DIR = Path("logs")
+
+# Create directories if they don't exist
+REPORTS_DIR.mkdir(exist_ok=True)
+CONFIG_BACKUP_DIR.mkdir(exist_ok=True)
+LOGS_DIR.mkdir(exist_ok=True)
 
 # Load environment variables
 load_dotenv()
 
 # API credentials from environment
 API_KEY = os.getenv("PUBPUB_API_KEY")
+# COMMUNITY_SLUG = os.getenv("COMMUNITY_SLUG", "rr-demo")
 COMMUNITY_SLUG = os.getenv("COMMUNITY_SLUG", "rrid")
+if COMMUNITY_SLUG == "rrid":
+    API_KEY = os.getenv("PUBPUB_API_KEY_RRID")
+elif COMMUNITY_SLUG == "rr-demo":
+    API_KEY = os.getenv("PUBPUB_API_KEY_DEMO")
+
 
 if not API_KEY:
     raise ValueError("PUBPUB_API_KEY environment variable is not set")
@@ -32,7 +49,7 @@ headers = {
 def save_report(pub_types_data, stages_data):
     """Save discovered type IDs and stages to a report file"""
     timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
-    report_file = f"pubpub_config_{timestamp}.md"
+    report_file = REPORTS_DIR / f"pubpub_config_{timestamp}.md"
     
     with open(report_file, "w") as f:
         f.write("# PubPub Configuration Report\n\n")
@@ -93,6 +110,18 @@ def save_report(pub_types_data, stages_data):
         ]
         for url in urls:
             f.write(f"- [{url}]({url})\n")
+            
+    # Also save the raw JSON data to the config_backup directory
+    pub_types_file = CONFIG_BACKUP_DIR / f"pub_types_{timestamp}.json"
+    with open(pub_types_file, "w") as f:
+        json.dump(pub_types_data, f, indent=2)
+        
+    stages_file = CONFIG_BACKUP_DIR / f"stages_{timestamp}.json"
+    with open(stages_file, "w") as f:
+        json.dump(stages_data, f, indent=2)
+        
+    print(f"✅ Report saved to {report_file}")
+    print(f"✅ JSON data saved to {pub_types_file} and {stages_file}")
 
 def test_api_endpoint(url, description):
     """Test an API endpoint and return the data"""
