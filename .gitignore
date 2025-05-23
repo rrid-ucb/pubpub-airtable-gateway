@@ -3,3 +3,4 @@ node_modules/
 requests.http
 .env*
 tempUrls.json
+data/
